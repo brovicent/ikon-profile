@@ -77,7 +77,6 @@
       object-fit: contain;
     }
 
-    /* Floating Add Button style */
     .mini-add-btn {
       transition: all 0.3s ease;
       background: rgba(255, 255, 255, 0.05);
@@ -106,6 +105,10 @@
       <label class="block text-sm font-semibold text-gray-400 mb-1">URL Website</label>
       <input type="url" id="service-url" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500" placeholder="https://..." required>
      </div>
+     <div>
+      <label class="block text-sm font-semibold text-gray-400 mb-1">Link Logo (URL Gambar)</label>
+      <input type="url" id="service-logo" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500" placeholder="https://contoh.com/logo.png">
+     </div>
      <div class="flex gap-3 pt-4">
       <button type="button" id="cancel-btn" class="flex-1 py-3 rounded-lg font-bold bg-white/5 hover:bg-white/10 transition">Batal</button>
       <button type="submit" class="flex-1 py-3 rounded-lg font-bold btn-add-gradient hover:opacity-90 transition">Tambah</button>
@@ -120,7 +123,7 @@
    <div class="glow-dot w-[400px] h-[400px] bg-blue-600 -bottom-20 -right-20"></div>
 
    <div class="max-w-6xl mx-auto px-6 py-8 relative z-10">
-    <!-- Header (Jam dan Mini Add Button) -->
+    <!-- Header -->
     <header class="flex items-center justify-end mb-8 gap-4">
      <button id="add-btn" class="mini-add-btn w-10 h-10 rounded-xl flex items-center justify-center" title="Tambah Layanan Baru">
       <i data-lucide="plus" class="w-5 h-5 text-gray-400"></i>
@@ -201,10 +204,8 @@
   </main>
 
   <script>
-    // Inisialisasi Ikon
     lucide.createIcons();
 
-    // Logika Jam
     function updateClock() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
@@ -213,7 +214,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Logika Modal
     const modal = document.getElementById('modal-backdrop');
     const addBtn = document.getElementById('add-btn');
     const cancelBtn = document.getElementById('cancel-btn');
@@ -226,21 +226,32 @@
 
     cancelBtn.addEventListener('click', () => {
       modal.classList.remove('active');
+      form.reset();
     });
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('service-name').value;
       const url = document.getElementById('service-url').value;
+      const logo = document.getElementById('service-logo').value;
       
       const grid = document.getElementById('streaming-grid');
       const newCard = document.createElement('a');
       newCard.href = url;
       newCard.target = "_blank";
       newCard.className = "streaming-card rounded-[2.5rem] aspect-square flex items-center justify-center bg-white/5 animate-fade-in-up";
+      
+      // Logika tampilan konten kartu
+      let cardContent = '';
+      if (logo) {
+        cardContent = `<img src="${logo}" alt="${name}" class="w-36">`;
+      } else {
+        cardContent = `<span class="text-xl font-black uppercase tracking-tighter text-center px-4">${name}</span>`;
+      }
+
       newCard.innerHTML = `
         <div class="card-inner p-8">
-          <span class="text-xl font-black uppercase tracking-tighter text-center">${name}</span>
+          ${cardContent}
         </div>
       `;
       
@@ -249,9 +260,11 @@
       form.reset();
     });
 
-    // Tutup modal saat klik di luar
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.remove('active');
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        form.reset();
+      }
     });
   </script>
  </body>
