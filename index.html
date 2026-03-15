@@ -3,12 +3,12 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Streaming Hub</title>
+  <title>Streaming Hub Fast</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+    html, body { height: 100%; font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; background: #080808; color: white; }
 
     .streaming-card {
       transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -16,14 +16,12 @@
       position: relative;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(145deg, #151515, #080808);
     }
     .streaming-card:hover {
       transform: translateY(-8px) scale(1.05);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
       border-color: rgba(255, 255, 255, 0.2);
-    }
-    .streaming-card:active {
-      transform: scale(0.98);
     }
 
     .card-inner {
@@ -45,8 +43,8 @@
       background: rgba(239, 68, 68, 0.9);
       color: white;
       border: none;
-      width: 2rem;
-      height: 2rem;
+      width: 2.2rem;
+      height: 2.2rem;
       border-radius: 0.75rem;
       cursor: pointer;
       display: flex;
@@ -56,47 +54,11 @@
       transition: all 0.2s;
       z-index: 20;
     }
-    .streaming-card:hover .delete-btn {
-      opacity: 1;
-    }
+    .streaming-card:hover .delete-btn { opacity: 1; }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in-up {
-      animation: fadeInUp 0.6s ease-out forwards;
-      opacity: 0;
-    }
-
-    .glow-dot {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.15;
-      pointer-events: none;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-    .modal-backdrop.active { display: flex; }
-
-    .btn-add-gradient {
-      background: linear-gradient(135deg, #e50914, #ff3d47);
-    }
-
-    /* Ukuran Logo Diperbesar */
     img.service-logo {
       max-width: 90%;
-      max-height: 75%; /* Diperbesar dari 50% ke 75% */
+      max-height: 75%;
       width: auto;
       height: auto;
       object-fit: contain;
@@ -107,57 +69,96 @@
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .mini-add-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: rotate(90deg);
-      border-color: rgba(255, 255, 255, 0.3);
+    .mini-add-btn:hover { background: rgba(255, 255, 255, 0.15); transform: rotate(90deg); }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
     }
+    .modal-backdrop.active { display: flex; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-item { animation: fadeInUp 0.4s ease-out forwards; }
+
+    /* Subtle Cloud Sync Indicator */
+    #sync-status {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 50;
+    }
+    .dot-pulse {
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
  </head>
- <body class="bg-[#080808] text-white overflow-x-hidden">
+ <body class="overflow-x-hidden">
 
   <!-- Modal -->
   <div id="modal-backdrop" class="modal-backdrop px-4">
-   <div class="bg-[#121212] border border-white/10 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+   <div class="bg-[#121212] border border-white/10 rounded-3xl p-8 w-full max-w-md shadow-2xl">
     <h3 class="text-2xl font-bold mb-6">Tambah Layanan</h3>
-    <form id="add-service-form" class="space-y-4">
+    <form id="add-service-form" class="space-y-5">
      <div>
-      <label class="block text-sm font-semibold text-gray-400 mb-1">Nama Layanan</label>
-      <input type="text" id="service-name" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500 text-white" placeholder="Contoh: Vidio" required>
+      <label class="block text-sm font-semibold text-gray-400 mb-1.5">Nama Layanan</label>
+      <input type="text" id="service-name" class="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-red-500" placeholder="Contoh: Vidio" required>
      </div>
      <div>
-      <label class="block text-sm font-semibold text-gray-400 mb-1">URL Website</label>
-      <input type="url" id="service-url" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500 text-white" placeholder="https://..." required>
+      <label class="block text-sm font-semibold text-gray-400 mb-1.5">URL Website</label>
+      <input type="url" id="service-url" class="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-red-500" placeholder="https://..." required>
      </div>
      <div>
-      <label class="block text-sm font-semibold text-gray-400 mb-1">Link Logo (URL Gambar)</label>
-      <input type="url" id="service-logo" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500 text-white" placeholder="https://contoh.com/logo.png">
+      <label class="block text-sm font-semibold text-gray-400 mb-1.5">Link Logo (URL Gambar)</label>
+      <input type="url" id="service-logo" class="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-red-500" placeholder="https://...">
      </div>
      <div class="flex gap-3 pt-4">
-      <button type="button" id="cancel-btn" class="flex-1 py-3 rounded-lg font-bold bg-white/5 hover:bg-white/10 transition">Batal</button>
-      <button type="submit" id="submit-btn" class="flex-1 py-3 rounded-lg font-bold btn-add-gradient hover:opacity-90 transition">Simpan</button>
+      <button type="button" id="cancel-btn" class="flex-1 py-3.5 rounded-xl font-bold bg-white/5 hover:bg-white/10">Batal</button>
+      <button type="submit" id="submit-btn" class="flex-1 py-3.5 rounded-xl font-bold bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/20">Simpan</button>
      </div>
     </form>
    </div>
   </div>
 
-  <main id="app-wrapper" class="relative min-h-screen">
-   <div class="glow-dot w-[500px] h-[500px] bg-red-600 -top-40 -left-40"></div>
-   <div class="glow-dot w-[400px] h-[400px] bg-blue-600 -bottom-20 -right-20"></div>
+  <div id="sync-status">
+    <div class="dot-pulse"></div>
+    <span>Cloud Synchronized</span>
+  </div>
 
+  <main id="app-wrapper" class="relative min-h-screen">
    <div class="max-w-6xl mx-auto px-6 py-8 relative z-10">
-    <header class="flex items-center justify-end mb-8 gap-4">
-     <button id="add-btn" class="mini-add-btn w-10 h-10 rounded-xl flex items-center justify-center" title="Tambah Layanan Baru">
-      <i data-lucide="plus" class="w-5 h-5 text-gray-400"></i>
+    <header class="flex items-center justify-end mb-12 gap-4">
+     <button id="add-btn" class="mini-add-btn w-12 h-12 rounded-2xl flex items-center justify-center">
+      <i data-lucide="plus" class="w-6 h-6 text-gray-400"></i>
      </button>
-     <div id="clock" class="text-lg font-mono font-bold text-gray-400 bg-white/5 px-5 py-2 rounded-2xl border border-white/5">00:00</div>
+     <div id="clock" class="text-xl font-mono font-bold text-gray-400 bg-white/5 px-6 py-2 rounded-2xl border border-white/5">00:00</div>
     </header>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 pt-4" id="streaming-grid"></div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 pt-4" id="streaming-grid">
+      <!-- Data Instan Muncul di Sini -->
+    </div>
 
     <footer class="mt-20 text-center opacity-30">
-     <p class="text-sm font-medium">Layanan Tersimpan di Cloud &copy; 2024</p>
+     <p class="text-sm font-medium tracking-wide">INSTANT LOAD ENABLED &copy; 2024</p>
     </footer>
    </div>
   </main>
@@ -167,67 +168,57 @@
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+    // Firebase Config
     const firebaseConfig = JSON.parse(__firebase_config);
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'streaming-hub-v1';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'streaming-hub-fast-v1';
 
-    let user = null;
+    const CACHE_KEY = `streaming_cache_${appId}`;
+    let isRemoteLoaded = false;
 
-    const initAuth = async () => {
-      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-        await signInWithCustomToken(auth, __initial_auth_token);
-      } else {
-        await signInAnonymously(auth);
+    // --- 1. RENDER INSTAN DARI LOCAL STORAGE ---
+    function loadCache() {
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        try {
+          const services = JSON.parse(cachedData);
+          renderGrid(services, false); // Render instan tanpa animasi fade-in berlebih
+        } catch (e) { console.error("Cache parse error", e); }
       }
-    };
-
-    onAuthStateChanged(auth, (u) => {
-      user = u;
-      if (user) startSync();
-    });
-
-    initAuth();
-
-    function startSync() {
-      if (!user) return;
-      const servicesRef = collection(db, 'artifacts', appId, 'public', 'data', 'streaming_services');
-      onSnapshot(servicesRef, (snapshot) => {
-        const services = [];
-        snapshot.forEach((doc) => services.push({ id: doc.id, ...doc.data() }));
-        services.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-        if (services.length === 0) seedInitialData(); else renderGrid(services);
-      });
     }
 
-    function renderGrid(services) {
+    // --- 2. LOGIKA RENDER ---
+    function renderGrid(services, withAnimation = true) {
       const grid = document.getElementById('streaming-grid');
       grid.innerHTML = '';
 
+      if (services.length === 0 && isRemoteLoaded) {
+        grid.innerHTML = `<div class="col-span-full py-20 text-center text-gray-500">Klik + untuk menambah layanan.</div>`;
+        return;
+      }
+
       services.forEach((s, i) => {
         const card = document.createElement('div');
-        card.className = "streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up relative";
-        card.style.animationDelay = `${i * 0.05}s`;
-        card.style.background = s.bg || "linear-gradient(145deg, #1a1a1a, #080808)";
+        card.className = `streaming-card rounded-[2.8rem] aspect-square relative ${withAnimation ? 'animate-item' : ''}`;
+        if (withAnimation) card.style.animationDelay = `${i * 0.05}s`;
+        
+        if (s.bg) card.style.background = s.bg;
 
-        // Gunakan kelas service-logo untuk ukuran yang diperbesar
         const content = s.logo 
-          ? `<img src="${s.logo}" alt="${s.name}" class="service-logo">`
-          : `<span class="text-xl font-black uppercase tracking-tighter text-center px-4">${s.name}</span>`;
+          ? `<img src="${s.logo}" alt="${s.name}" class="service-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+             <span class="text-xl font-bold uppercase hidden">${s.name}</span>`
+          : `<span class="text-2xl font-black uppercase tracking-tighter text-center px-6">${s.name}</span>`;
 
         card.innerHTML = `
-          <button class="delete-btn" title="Hapus">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
-          <a href="${s.url}" target="_blank" class="card-inner p-4">
-            ${content}
-          </a>
+          <button class="delete-btn" title="Hapus"><i data-lucide="x" class="w-5 h-5"></i></button>
+          <a href="${s.url}" target="_blank" class="card-inner p-6">${content}</a>
         `;
 
         card.querySelector('.delete-btn').addEventListener('click', async (e) => {
           e.preventDefault();
-          if (confirm(`Hapus layanan ${s.name}?`)) {
+          if (confirm(`Hapus ${s.name}?`)) {
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'streaming_services', s.id));
           }
         });
@@ -237,48 +228,58 @@
       lucide.createIcons();
     }
 
-    const form = document.getElementById('add-service-form');
-    const modal = document.getElementById('modal-backdrop');
+    // --- 3. SINKRONISASI CLOUD (Latar Belakang) ---
+    const initAuth = async () => {
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
+      }
+    };
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!user) return;
-      const submitBtn = document.getElementById('submit-btn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Menyimpan...";
-      const name = document.getElementById('service-name').value;
-      const url = document.getElementById('service-url').value;
-      const logo = document.getElementById('service-logo').value;
-      const newId = crypto.randomUUID();
-      try {
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'streaming_services', newId), {
-          name, url, logo, createdAt: Date.now()
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const servicesRef = collection(db, 'artifacts', appId, 'public', 'data', 'streaming_services');
+        onSnapshot(servicesRef, (snapshot) => {
+          const services = [];
+          snapshot.forEach((doc) => services.push({ id: doc.id, ...doc.data() }));
+          services.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+          
+          isRemoteLoaded = true;
+          // Simpan ke Cache untuk kunjungan berikutnya
+          localStorage.setItem(CACHE_KEY, JSON.stringify(services));
+          // Update tampilan
+          renderGrid(services, false); 
+          
+          document.querySelector('#sync-status span').textContent = "Cloud Synced";
         });
-        modal.classList.remove('active');
-        form.reset();
-      } catch (err) { console.error(err); } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Simpan";
       }
     });
 
-    async function seedInitialData() {
-      const initial = [
-        { name: "Netflix", url: "https://www.netflix.com", logo: "https://raw.githubusercontent.com/brovicent/ikon-profile/refs/heads/main/netflix.png", bg: "linear-gradient(145deg, #1a0a0a, #080808)" },
-        { name: "Prime Video", url: "https://www.primevideo.com", logo: "https://raw.githubusercontent.com/brovicent/ikon-profile/refs/heads/main/Amazon%20Prime.png", bg: "linear-gradient(145deg, #001e2e, #000c14)" },
-        { name: "Disney+", url: "https://www.disneyplus.com", logo: "https://raw.githubusercontent.com/brovicent/ikon-profile/8409724bc6b017f615761e9e5f7d62546da6947b/Disney_wordmark.svg", bg: "linear-gradient(145deg, #021e4d, #010a1a)" }
-      ];
-      for (const item of initial) {
-        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'streaming_services', crypto.randomUUID()), { ...item, createdAt: Date.now() });
-      }
-    }
+    // --- 4. FORM LOGIC ---
+    document.getElementById('add-service-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('service-name').value;
+      const url = document.getElementById('service-url').value;
+      const logo = document.getElementById('service-logo').value;
+      
+      try {
+        const newRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'streaming_services'));
+        await setDoc(newRef, { name, url, logo, createdAt: Date.now() });
+        document.getElementById('modal-backdrop').classList.remove('active');
+        document.getElementById('add-service-form').reset();
+      } catch (err) { console.error(err); }
+    });
 
-    document.getElementById('add-btn').addEventListener('click', () => modal.classList.add('active'));
-    document.getElementById('cancel-btn').addEventListener('click', () => modal.classList.remove('active'));
-    
+    // Jalankan Instan
+    loadCache();
+    initAuth();
+
+    // UI Helpers
+    document.getElementById('add-btn').addEventListener('click', () => document.getElementById('modal-backdrop').classList.add('active'));
+    document.getElementById('cancel-btn').addEventListener('click', () => document.getElementById('modal-backdrop').classList.remove('active'));
     function updateClock() {
-      const now = new Date();
-      document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     }
     setInterval(updateClock, 1000);
     updateClock();
