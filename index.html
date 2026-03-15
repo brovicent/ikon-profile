@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="id" class="h-full">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,6 +38,28 @@
       text-align: center;
     }
 
+    .delete-btn {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: rgba(239, 68, 68, 0.9);
+      color: white;
+      border: none;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: all 0.2s;
+      z-index: 20;
+    }
+    .streaming-card:hover .delete-btn {
+      opacity: 1;
+    }
+
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -71,8 +93,11 @@
       background: linear-gradient(135deg, #e50914, #ff3d47);
     }
 
-    img {
-      max-width: 85%;
+    /* Ukuran Logo Diperbesar */
+    img.service-logo {
+      max-width: 90%;
+      max-height: 75%; /* Diperbesar dari 50% ke 75% */
+      width: auto;
       height: auto;
       object-fit: contain;
     }
@@ -99,31 +124,29 @@
     <form id="add-service-form" class="space-y-4">
      <div>
       <label class="block text-sm font-semibold text-gray-400 mb-1">Nama Layanan</label>
-      <input type="text" id="service-name" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500" placeholder="Contoh: HBO Max" required>
+      <input type="text" id="service-name" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500 text-white" placeholder="Contoh: Vidio" required>
      </div>
      <div>
       <label class="block text-sm font-semibold text-gray-400 mb-1">URL Website</label>
-      <input type="url" id="service-url" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500" placeholder="https://..." required>
+      <input type="url" id="service-url" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500 text-white" placeholder="https://..." required>
      </div>
      <div>
       <label class="block text-sm font-semibold text-gray-400 mb-1">Link Logo (URL Gambar)</label>
-      <input type="url" id="service-logo" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500" placeholder="https://contoh.com/logo.png">
+      <input type="url" id="service-logo" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 focus:outline-none focus:border-red-500 text-white" placeholder="https://contoh.com/logo.png">
      </div>
      <div class="flex gap-3 pt-4">
       <button type="button" id="cancel-btn" class="flex-1 py-3 rounded-lg font-bold bg-white/5 hover:bg-white/10 transition">Batal</button>
-      <button type="submit" class="flex-1 py-3 rounded-lg font-bold btn-add-gradient hover:opacity-90 transition">Tambah</button>
+      <button type="submit" id="submit-btn" class="flex-1 py-3 rounded-lg font-bold btn-add-gradient hover:opacity-90 transition">Simpan</button>
      </div>
     </form>
    </div>
   </div>
 
   <main id="app-wrapper" class="relative min-h-screen">
-   <!-- Dekorasi Cahaya Ambient -->
    <div class="glow-dot w-[500px] h-[500px] bg-red-600 -top-40 -left-40"></div>
    <div class="glow-dot w-[400px] h-[400px] bg-blue-600 -bottom-20 -right-20"></div>
 
    <div class="max-w-6xl mx-auto px-6 py-8 relative z-10">
-    <!-- Header -->
     <header class="flex items-center justify-end mb-8 gap-4">
      <button id="add-btn" class="mini-add-btn w-10 h-10 rounded-xl flex items-center justify-center" title="Tambah Layanan Baru">
       <i data-lucide="plus" class="w-5 h-5 text-gray-400"></i>
@@ -131,141 +154,134 @@
      <div id="clock" class="text-lg font-mono font-bold text-gray-400 bg-white/5 px-5 py-2 rounded-2xl border border-white/5">00:00</div>
     </header>
 
-    <!-- Grid Layanan Streaming -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 pt-4" id="streaming-grid">
-     
-     <!-- Netflix -->
-     <a href="https://www.netflix.com" target="_blank" class="streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up" style="background: linear-gradient(145deg, #1a0a0a, #080808); animation-delay: 0.1s">
-      <div class="card-inner p-8">
-       <img src="https://raw.githubusercontent.com/brovicent/ikon-profile/refs/heads/main/netflix.png" alt="Logo Netflix" class="w-36 mb-2">
-      </div>
-     </a>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 pt-4" id="streaming-grid"></div>
 
-     <!-- Prime Video -->
-     <a href="https://www.primevideo.com" target="_blank" class="streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up" style="background: linear-gradient(145deg, #001e2e, #000c14); animation-delay: 0.2s">
-      <div class="card-inner p-8">
-       <img src="https://raw.githubusercontent.com/brovicent/ikon-profile/refs/heads/main/Amazon%20Prime.png" alt="Logo Prime Video" class="w-36">
-      </div>
-     </a>
-
-     <!-- Disney+ -->
-     <a href="https://www.disneyplus.com" target="_blank" class="streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up" style="background: linear-gradient(145deg, #021e4d, #010a1a); animation-delay: 0.3s">
-      <div class="card-inner p-8">
-       <img src="https://raw.githubusercontent.com/brovicent/ikon-profile/8409724bc6b017f615761e9e5f7d62546da6947b/Disney_wordmark.svg" alt="Logo Disney+" class="w-36">
-      </div>
-     </a>
-
-     <!-- YouTube -->
-     <a href="https://www.youtube.com" target="_blank" class="streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up" style="background: linear-gradient(145deg, #2a0000, #080808); animation-delay: 0.4s">
-      <div class="card-inner p-8">
-       <div class="w-20 h-14 bg-red-600 rounded-2xl flex items-center justify-center mb-3 shadow-lg shadow-red-600/10">
-        <svg viewBox="0 0 24 24" class="w-8 h-8 fill-white"><path d="M8 5v14l11-7z"/></svg>
-       </div>
-       <span class="text-xl font-black tracking-tighter">YouTube</span>
-      </div>
-     </a>
-
-     <!-- Crunchyroll -->
-     <a href="https://www.crunchyroll.com" target="_blank" class="streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up" style="background: linear-gradient(145deg, #2e1a00, #080808); animation-delay: 0.5s">
-      <div class="card-inner p-8">
-       <div class="w-16 h-16 rounded-full border-[6px] border-[#F47521] relative mb-3 flex items-center justify-center shadow-lg shadow-orange-600/10">
-        <div class="w-8 h-8 rounded-full border-4 border-[#F47521]"></div>
-        <div class="absolute right-0 top-1 w-4 h-4 rounded-full bg-[#F47521]"></div>
-       </div>
-       <span class="text-sm font-bold text-[#F47521] uppercase tracking-widest">Crunchyroll</span>
-      </div>
-     </a>
-
-     <!-- We TV -->
-     <a href="https://wetv.vip" target="_blank" class="streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up" style="background: linear-gradient(145deg, #001b2e, #080808); animation-delay: 0.6s">
-      <div class="card-inner p-8">
-       <div class="flex flex-col">
-        <span class="text-4xl font-black leading-none bg-gradient-to-r from-orange-500 via-green-400 to-blue-500 bg-clip-text text-transparent">We</span>
-        <span class="text-3xl font-black leading-none text-white ml-6 italic">TV</span>
-       </div>
-      </div>
-     </a>
-
-     <!-- Viu -->
-     <a href="https://www.viu.com" target="_blank" class="streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up" style="background: linear-gradient(145deg, #2e2800, #080808); animation-delay: 0.7s">
-      <div class="card-inner p-8">
-       <div class="bg-[#FFD300] text-black font-black text-4xl px-4 py-1 rounded-xl shadow-lg shadow-yellow-500/20 transform -rotate-2">Viu</div>
-       <span class="mt-4 text-[10px] text-yellow-500 font-bold uppercase tracking-widest">Asian Content</span>
-      </div>
-     </a>
-
-    </div>
-
-    <!-- Footer -->
     <footer class="mt-20 text-center opacity-30">
-     <p class="text-sm font-medium">Akses Cepat Layanan Streaming &copy; 2024</p>
+     <p class="text-sm font-medium">Layanan Tersimpan di Cloud &copy; 2024</p>
     </footer>
    </div>
   </main>
 
-  <script>
-    lucide.createIcons();
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    function updateClock() {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
-      document.getElementById('clock').textContent = timeStr;
+    const firebaseConfig = JSON.parse(__firebase_config);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'streaming-hub-v1';
+
+    let user = null;
+
+    const initAuth = async () => {
+      if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+        await signInWithCustomToken(auth, __initial_auth_token);
+      } else {
+        await signInAnonymously(auth);
+      }
+    };
+
+    onAuthStateChanged(auth, (u) => {
+      user = u;
+      if (user) startSync();
+    });
+
+    initAuth();
+
+    function startSync() {
+      if (!user) return;
+      const servicesRef = collection(db, 'artifacts', appId, 'public', 'data', 'streaming_services');
+      onSnapshot(servicesRef, (snapshot) => {
+        const services = [];
+        snapshot.forEach((doc) => services.push({ id: doc.id, ...doc.data() }));
+        services.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+        if (services.length === 0) seedInitialData(); else renderGrid(services);
+      });
     }
-    setInterval(updateClock, 1000);
-    updateClock();
 
-    const modal = document.getElementById('modal-backdrop');
-    const addBtn = document.getElementById('add-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
+    function renderGrid(services) {
+      const grid = document.getElementById('streaming-grid');
+      grid.innerHTML = '';
+
+      services.forEach((s, i) => {
+        const card = document.createElement('div');
+        card.className = "streaming-card rounded-[2.5rem] aspect-square animate-fade-in-up relative";
+        card.style.animationDelay = `${i * 0.05}s`;
+        card.style.background = s.bg || "linear-gradient(145deg, #1a1a1a, #080808)";
+
+        // Gunakan kelas service-logo untuk ukuran yang diperbesar
+        const content = s.logo 
+          ? `<img src="${s.logo}" alt="${s.name}" class="service-logo">`
+          : `<span class="text-xl font-black uppercase tracking-tighter text-center px-4">${s.name}</span>`;
+
+        card.innerHTML = `
+          <button class="delete-btn" title="Hapus">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+          <a href="${s.url}" target="_blank" class="card-inner p-4">
+            ${content}
+          </a>
+        `;
+
+        card.querySelector('.delete-btn').addEventListener('click', async (e) => {
+          e.preventDefault();
+          if (confirm(`Hapus layanan ${s.name}?`)) {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'streaming_services', s.id));
+          }
+        });
+
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
     const form = document.getElementById('add-service-form');
+    const modal = document.getElementById('modal-backdrop');
 
-    addBtn.addEventListener('click', () => {
-      modal.classList.add('active');
-      document.getElementById('service-name').focus();
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      modal.classList.remove('active');
-      form.reset();
-    });
-
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!user) return;
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Menyimpan...";
       const name = document.getElementById('service-name').value;
       const url = document.getElementById('service-url').value;
       const logo = document.getElementById('service-logo').value;
-      
-      const grid = document.getElementById('streaming-grid');
-      const newCard = document.createElement('a');
-      newCard.href = url;
-      newCard.target = "_blank";
-      newCard.className = "streaming-card rounded-[2.5rem] aspect-square flex items-center justify-center bg-white/5 animate-fade-in-up";
-      
-      // Logika tampilan konten kartu
-      let cardContent = '';
-      if (logo) {
-        cardContent = `<img src="${logo}" alt="${name}" class="w-36">`;
-      } else {
-        cardContent = `<span class="text-xl font-black uppercase tracking-tighter text-center px-4">${name}</span>`;
-      }
-
-      newCard.innerHTML = `
-        <div class="card-inner p-8">
-          ${cardContent}
-        </div>
-      `;
-      
-      grid.appendChild(newCard);
-      modal.classList.remove('active');
-      form.reset();
-    });
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
+      const newId = crypto.randomUUID();
+      try {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'streaming_services', newId), {
+          name, url, logo, createdAt: Date.now()
+        });
         modal.classList.remove('active');
         form.reset();
+      } catch (err) { console.error(err); } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Simpan";
       }
     });
+
+    async function seedInitialData() {
+      const initial = [
+        { name: "Netflix", url: "https://www.netflix.com", logo: "https://raw.githubusercontent.com/brovicent/ikon-profile/refs/heads/main/netflix.png", bg: "linear-gradient(145deg, #1a0a0a, #080808)" },
+        { name: "Prime Video", url: "https://www.primevideo.com", logo: "https://raw.githubusercontent.com/brovicent/ikon-profile/refs/heads/main/Amazon%20Prime.png", bg: "linear-gradient(145deg, #001e2e, #000c14)" },
+        { name: "Disney+", url: "https://www.disneyplus.com", logo: "https://raw.githubusercontent.com/brovicent/ikon-profile/8409724bc6b017f615761e9e5f7d62546da6947b/Disney_wordmark.svg", bg: "linear-gradient(145deg, #021e4d, #010a1a)" }
+      ];
+      for (const item of initial) {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'streaming_services', crypto.randomUUID()), { ...item, createdAt: Date.now() });
+      }
+    }
+
+    document.getElementById('add-btn').addEventListener('click', () => modal.classList.add('active'));
+    document.getElementById('cancel-btn').addEventListener('click', () => modal.classList.remove('active'));
+    
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
   </script>
  </body>
 </html>
